@@ -1,0 +1,6 @@
+{
+  "name": "physics-si",
+  "version": "1.0.0",
+  "description": "physics.si — physics superintelligence, powered by the Anthropic API",
+  "private": true
+}
