@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>physics.si</title>
+<!-- build 2026-07-29-B · safe-area layout · if you can read this in view-source, the new version is live -->
 <meta name="description" content="physics.si — a physics superintelligence instrument.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,8 +89,40 @@ canvas#cosmos{position:fixed;inset:0;z-index:0}
   box-shadow:0 0 14px rgba(169,198,232,.4)}
 .depth button:hover:not(.on){color:var(--ink);border-color:var(--line-hi)}
 
+/* ═══ Sessions ═══ */
+#sess-btn{
+  margin-top:12px;display:inline-block;cursor:pointer;
+  font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--faint);border:1px solid var(--line);padding:6px 12px;transition:all .25s;
+}
+#sess-btn:hover{color:var(--ink);border-color:var(--line-hi)}
+#sess-panel{
+  display:none;position:absolute;right:0;top:100%;margin-top:10px;width:320px;max-height:52vh;overflow-y:auto;
+  background:rgba(8,9,12,.92);backdrop-filter:blur(16px);border:1px solid var(--line);
+  text-align:left;z-index:60;scrollbar-width:thin;
+}
+#sess-panel.open{display:block;animation:entIn .3s ease}
+.sess-item{
+  padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;
+  display:flex;gap:10px;align-items:flex-start;transition:background .2s;
+}
+.sess-item:hover{background:rgba(169,198,232,.05)}
+.sess-item .st{flex:1;min-width:0}
+.sess-item .t1{font-family:var(--disp);font-size:12.5px;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sess-item .t2{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);
+  text-transform:uppercase;margin-top:5px}
+.sess-item .sx{
+  flex:none;background:transparent;border:none;color:var(--faint);cursor:pointer;
+  font-size:12px;padding:2px 5px;transition:color .2s;
+}
+.sess-item .sx:hover{color:#d98f8f}
+.sess-empty{padding:18px 14px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.15em;color:var(--faint);text-transform:uppercase}
+
 /* ═══ Constellation ═══ */
-#field-space{position:fixed;inset:0;z-index:3}
+#field-space{position:fixed;inset:0;z-index:3;transform-origin:50% 50%;will-change:transform}
+canvas#filaments{position:absolute;inset:0;pointer-events:none;z-index:1}
 .ring{position:absolute;left:50%;top:50%;border-radius:50%;border:1px solid rgba(148,153,166,.10);
   transform:translate(-50%,-50%);pointer-events:none}
 .ring.r2{border-style:dashed;border-color:rgba(148,153,166,.07)}
@@ -100,7 +133,6 @@ canvas#cosmos{position:fixed;inset:0;z-index:0}
   background:radial-gradient(circle at 38% 32%, rgba(138,148,184,.32), rgba(169,198,232,.10) 55%, transparent 75%);
   border:1px solid rgba(169,198,232,.35);
   box-shadow:0 0 40px rgba(152,178,210,.25), inset 0 0 30px rgba(152,178,210,.12);
-  transition:box-shadow .4s, transform .4s;
   animation:coreBreath 5s ease-in-out infinite;
 }
 @keyframes coreBreath{0%,100%{box-shadow:0 0 34px rgba(152,178,210,.22), inset 0 0 26px rgba(152,178,210,.10)}
@@ -128,13 +160,16 @@ canvas#cosmos{position:fixed;inset:0;z-index:0}
 .node .nm{
   font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--dim);text-align:center;max-width:120px;line-height:1.5;
-  transition:color .3s;
+  transition:color .3s, opacity .8s ease .5s;
 }
 .node:hover .orb,.node.lit .orb{
   transform:scale(1.22);border-color:var(--cyan);
   box-shadow:0 0 34px rgba(169,198,232,.45), inset 0 0 18px rgba(169,198,232,.15);
 }
 .node:hover .nm,.node.lit .nm{color:var(--ink)}
+#field-space.compact .node .orb{width:40px;height:40px;font-size:14px}
+#field-space.compact #core{width:74px;height:74px}
+#field-space.compact #core .psi{font-size:24px}
 
 /* ═══ Readout HUD ═══ */
 #readout{
@@ -174,6 +209,75 @@ canvas#cosmos{position:fixed;inset:0;z-index:0}
   opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;
 }
 .dtool:hover .tip{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══ Entry actions (copy / listen) ═══ */
+.eact{
+  background:transparent;border:1px solid var(--line);color:var(--faint);cursor:pointer;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+  padding:3px 9px;margin-left:8px;transition:all .2s;flex:none;
+}
+.eact:hover{color:var(--ink);border-color:var(--line-hi)}
+.thinklbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--faint);margin-top:8px}
+
+/* ═══ Attach ═══ */
+#ws-attach{
+  flex:none;width:38px;height:38px;margin:8px 0 8px 4px;border:none;background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+#ws-attach svg{width:17px;height:17px;stroke:var(--faint);stroke-width:1.5;stroke-linecap:round;transition:stroke .25s}
+#ws-attach:hover svg{stroke:var(--ink)}
+#attach-chip{max-width:880px;margin:0 auto}
+#attach-chip .chip{
+  display:inline-flex;align-items:center;gap:9px;margin-bottom:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--cyan);
+  border:1px solid rgba(169,198,232,.3);padding:6px 12px;background:rgba(169,198,232,.06);
+}
+#attach-chip .chip b{font-weight:400;color:var(--dim)}
+#attach-chip .chip button{background:none;border:none;color:var(--faint);cursor:pointer;font-size:11px}
+#attach-chip .chip button:hover{color:#d98f8f}
+
+/* ═══ Voice input ═══ */
+#deck-mic{
+  position:fixed;right:32px;bottom:34px;z-index:5;cursor:pointer;
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);background:rgba(8,9,12,.55);backdrop-filter:blur(10px);
+  transition:opacity 1s ease .4s, border-color .3s, transform .3s;
+}
+#deck-mic:hover{border-color:var(--line-hi);transform:scale(1.08)}
+#deck-mic svg,#ws-mic svg{
+  width:19px;height:19px;fill:var(--dim);stroke:var(--dim);stroke-width:1.6;
+  stroke-linecap:round;transition:fill .25s, stroke .25s;
+}
+#deck-mic:hover svg,#ws-mic:hover svg{fill:var(--ink);stroke:var(--ink)}
+#ws-mic{
+  flex:none;width:40px;height:38px;margin:8px 0;border:none;background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.listening#deck-mic,#ws-mic.listening{border-color:var(--cyan)}
+.listening#deck-mic{animation:micPulse 1.6s ease-out infinite}
+#ws-mic.listening{animation:micPulse 1.6s ease-out infinite;border-radius:50%}
+.listening#deck-mic svg,#ws-mic.listening svg{fill:var(--cyan);stroke:var(--cyan)}
+@keyframes micPulse{
+  0%{box-shadow:0 0 0 0 rgba(169,198,232,.45)}
+  100%{box-shadow:0 0 0 16px rgba(169,198,232,0)}
+}
+body:not(.booted) #deck-mic{opacity:0}
+
+@keyframes popIn{from{transform:scale(.1);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* pre-boot hidden states */
+.node .orb{opacity:1}
+body:not(.booted) .node .orb{transform:scale(.12);opacity:0}
+body:not(.booted) .node .nm{opacity:0}
+.ring{transition:opacity 1.2s ease, width 1.2s cubic-bezier(.2,.85,.25,1), height 1.2s cubic-bezier(.2,.85,.25,1)}
+body:not(.booted) .ring{opacity:0}
+#core{transition:box-shadow .4s, transform .4s, opacity .9s ease .15s}
+body:not(.booted) #core{opacity:0}
+.logo,.sysline,#readout,#dock,.hud-corner{transition:opacity 1s ease .4s}
+body:not(.booted) .logo,body:not(.booted) .sysline,body:not(.booted) #readout,
+body:not(.booted) #dock,body:not(.booted) .hud-corner{opacity:0}
 
 /* ═══ Workspace ═══ */
 #ws{
@@ -262,120 +366,38 @@ canvas#cosmos{position:fixed;inset:0;z-index:0}
 #ws-send:hover{box-shadow:0 0 20px rgba(169,198,232,.5)}
 #ws-send:disabled{opacity:.35;cursor:default;box-shadow:none}
 
-/* ═══ Sessions ═══ */
-#sess-btn{
-  margin-top:12px;display:inline-block;cursor:pointer;
-  font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--faint);border:1px solid var(--line);padding:6px 12px;transition:all .25s;
-}
-#sess-btn:hover{color:var(--ink);border-color:var(--line-hi)}
-#sess-panel{
-  display:none;position:absolute;right:0;top:100%;margin-top:10px;width:320px;max-height:52vh;overflow-y:auto;
-  background:rgba(8,9,12,.92);backdrop-filter:blur(16px);border:1px solid var(--line);
-  text-align:left;z-index:60;scrollbar-width:thin;
-}
-#sess-panel.open{display:block;animation:entIn .3s ease}
-.sess-item{
-  padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;
-  display:flex;gap:10px;align-items:flex-start;transition:background .2s;
-}
-.sess-item:hover{background:rgba(169,198,232,.05)}
-.sess-item .st{flex:1;min-width:0}
-.sess-item .t1{font-family:var(--disp);font-size:12.5px;color:var(--ink);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sess-item .t2{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--faint);
-  text-transform:uppercase;margin-top:5px}
-.sess-item .sx{
-  flex:none;background:transparent;border:none;color:var(--faint);cursor:pointer;
-  font-size:12px;padding:2px 5px;transition:color .2s;
-}
-.sess-item .sx:hover{color:#d98f8f}
-.sess-empty{padding:18px 14px;font-family:var(--mono);font-size:10px;
-  letter-spacing:.15em;color:var(--faint);text-transform:uppercase}
-
-/* ═══ Entry actions (copy / listen) ═══ */
-.eact{
-  background:transparent;border:1px solid var(--line);color:var(--faint);cursor:pointer;
-  font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
-  padding:3px 9px;margin-left:8px;transition:all .2s;flex:none;
-}
-.eact:hover{color:var(--ink);border-color:var(--line-hi)}
-.thinklbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;
-  text-transform:uppercase;color:var(--faint);margin-top:8px}
-
-/* ═══ Attach ═══ */
-#ws-attach{
-  flex:none;width:38px;height:38px;margin:8px 0 8px 4px;border:none;background:transparent;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-}
-#ws-attach svg{width:17px;height:17px;stroke:var(--faint);stroke-width:1.5;stroke-linecap:round;transition:stroke .25s}
-#ws-attach:hover svg{stroke:var(--ink)}
-#attach-chip{max-width:880px;margin:0 auto}
-#attach-chip .chip{
-  display:inline-flex;align-items:center;gap:9px;margin-bottom:10px;
-  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--cyan);
-  border:1px solid rgba(169,198,232,.3);padding:6px 12px;background:rgba(169,198,232,.06);
-}
-#attach-chip .chip b{font-weight:400;color:var(--dim)}
-#attach-chip .chip button{background:none;border:none;color:var(--faint);cursor:pointer;font-size:11px}
-#attach-chip .chip button:hover{color:#d98f8f}
-
-/* ═══ Voice input ═══ */
-#deck-mic{
-  position:fixed;right:32px;bottom:34px;z-index:5;cursor:pointer;
-  width:48px;height:48px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--line);background:rgba(8,9,12,.55);backdrop-filter:blur(10px);
-  transition:border-color .3s, transform .3s;
-}
-#deck-mic:hover{border-color:var(--line-hi);transform:scale(1.08)}
-#deck-mic svg,#ws-mic svg{
-  width:19px;height:19px;fill:var(--dim);stroke:var(--dim);stroke-width:1.6;
-  stroke-linecap:round;transition:fill .25s, stroke .25s;
-}
-#deck-mic:hover svg,#ws-mic:hover svg{fill:var(--ink);stroke:var(--ink)}
-#ws-mic{
-  flex:none;width:40px;height:38px;margin:8px 0;border:none;background:transparent;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-}
-.listening#deck-mic,#ws-mic.listening{border-color:var(--cyan)}
-.listening#deck-mic{animation:micPulse 1.6s ease-out infinite}
-#ws-mic.listening{animation:micPulse 1.6s ease-out infinite;border-radius:50%}
-.listening#deck-mic svg,#ws-mic.listening svg{fill:var(--cyan);stroke:var(--cyan)}
-@keyframes micPulse{
-  0%{box-shadow:0 0 0 0 rgba(169,198,232,.45)}
-  100%{box-shadow:0 0 0 16px rgba(169,198,232,0)}
-}
-body:not(.booted) #deck-mic{opacity:0}
-#deck-mic{transition:opacity 1s ease .4s, border-color .3s, transform .3s}
-
-/* ═══ Filaments + tilt ═══ */
-#field-space{transform-origin:50% 50%;will-change:transform}
-canvas#filaments{position:absolute;inset:0;pointer-events:none;z-index:1}
-
-@keyframes popIn{from{transform:scale(.1);opacity:0}to{transform:scale(1);opacity:1}}
-
-/* pre-boot hidden states */
-.node .orb{opacity:1}
-body:not(.booted) .node .orb{transform:scale(.12);opacity:0}
-.node .nm{transition:color .3s, opacity .8s ease .5s}
-body:not(.booted) .node .nm{opacity:0}
-.ring{transition:opacity 1.2s ease, width 1.2s cubic-bezier(.2,.85,.25,1), height 1.2s cubic-bezier(.2,.85,.25,1)}
-body:not(.booted) .ring{opacity:0}
-#core{transition:box-shadow .4s, transform .4s, opacity .9s ease .15s}
-body:not(.booted) #core{opacity:0}
-.logo,.sysline,#readout,#dock,.hud-corner{transition:opacity 1s ease .4s}
-body:not(.booted) .logo,body:not(.booted) .sysline,body:not(.booted) #readout,
-body:not(.booted) #dock,body:not(.booted) .hud-corner{opacity:0}
-
+/* ═══ Mobile ═══ */
 @media(max-width:900px){
   #readout{display:none}
   .sysline .stat{display:none}
+  .sysline{top:16px;right:14px;max-width:72vw}
+  .depth{max-width:72vw;margin-top:0}
   .node .nm{display:none}
   .node .orb{width:46px;height:46px;font-size:16px}
-  #dock{max-width:94vw;flex-wrap:wrap;justify-content:center}
-  .logo{top:18px;left:18px}
-  .sysline{top:20px;right:18px}
+  #dock{bottom:14px;padding:6px;gap:2px}
+  .dtool{width:46px;height:46px;font-size:16px}
+  .dtool .tip{display:none}
+  #deck-mic{right:12px;bottom:16px;width:42px;height:42px}
+  .logo{top:16px;left:16px}
+  .logo-mark{width:34px;height:34px}
+  #sess-panel{width:min(280px,86vw)}
+  .ws-depth{display:none}
+  .ws-top{padding:0 14px;gap:10px}
+  #ws-scroll{padding:24px 14px}
+  .ws-bottom{padding:12px 12px 16px}
+  .hud-corner{display:none}
+}
+@media(max-width:600px){
+  /* narrow portrait: dock wraps to 2 rows of 4, mic tucks beside it */
+  #dock{max-width:236px;flex-wrap:wrap;justify-content:center}
+  /* stack the control bar BELOW the logo so they can never collide */
+  .sysline{top:60px;right:12px;left:12px;max-width:none}
+  .depth{max-width:none;justify-content:flex-end;gap:3px}
+  .depth .lbl{display:none}
+  .depth button{font-size:8px;padding:4px 6px;letter-spacing:.08em}
+  #sess-btn{margin-top:8px;padding:5px 9px;font-size:8px}
+  .logo{top:12px;left:12px}
+  .logo .tg{display:none}
 }
 </style>
 </head>
@@ -592,7 +614,7 @@ const SUGGESTIONS={
 
 /* ═════ State ═════ */
 const $=id=>document.getElementById(id);
-let state={field:null,tool:null,level:'PhD',messages:[],streaming:false};
+let state={field:null,tool:null,level:'PhD',messages:[],streaming:false,attach:null};
 let hoverHold=0,hoveredIdx=-1,gm={x:.5,y:.5};
 addEventListener('mousemove',e=>{gm.x=e.clientX/innerWidth;gm.y=e.clientY/innerHeight;});
 
@@ -602,9 +624,7 @@ let nodes=[];
 function buildConstellation(){
   space.innerHTML='';nodes=[];
   space.insertAdjacentHTML('beforeend','<canvas id="filaments"></canvas>');
-  // rings
   for(const cls of ['r1','r2'])space.insertAdjacentHTML('beforeend',`<div class="ring ${cls}"></div>`);
-  // core
   space.insertAdjacentHTML('beforeend',
     `<div id="core" onclick="openWs(null,null)"
        onmouseenter="ro('GENERAL QUESTIONS','any topic · any depth · always open','click to open')"
@@ -630,29 +650,53 @@ function buildConstellation(){
 let geom={};
 function layoutRings(){
   const w=innerWidth,h=innerHeight;
-  const rx1=Math.min(w*.235,330),ry1=Math.min(h*.225,235);
-  const rx2=Math.min(w*.405,600),ry2=Math.min(h*.375,375);
-  geom={cx:w/2,cy:h/2 - 8,rx1,ry1,rx2,ry2};
+  // measured safe areas — nodes must never enter chrome zones
+  const sl=document.querySelector('.sysline'),dock=$('dock');
+  const topInset=Math.max(96,(sl?sl.offsetTop+sl.offsetHeight:0)+30);
+  const dockH=dock?dock.offsetHeight:68;
+  const bottomInset=dockH+(w>900?26:14)+34+(w<=600?10:0);
+  const side=w>900?134:46;
+  const nodePad=w>900?58:40;
+  const availY=Math.max(60,(h-topInset-bottomInset)/2);
+  const cy=topInset+availY;
+  const rx2=Math.max(104,Math.min(w/2-side,620));
+  const ry2=Math.max(38,Math.min(availY-nodePad,390));
+  const rx1=rx2*.55,ry1=ry2*.55;
+  // single-ring mode when too flat for an inner ring around the core
+  const single=ry2<100;
+  geom={cx:w/2,cy,rx1,ry1,rx2,ry2,single};
   const rings=space.querySelectorAll('.ring');
-  if(rings[0]){rings[0].style.width=rx1*2+'px';rings[0].style.height=ry1*2+'px';}
-  if(rings[1]){rings[1].style.width=rx2*2+'px';rings[1].style.height=ry2*2+'px';}
+  if(rings[0]){rings[0].style.width=rx1*2+'px';rings[0].style.height=ry1*2+'px';rings[0].style.top=cy+'px';
+    rings[0].style.display=single?'none':'';}
+  if(rings[1]){rings[1].style.width=rx2*2+'px';rings[1].style.height=ry2*2+'px';rings[1].style.top=cy+'px';}
+  const core=document.getElementById('core');
+  if(core)core.style.top=cy+'px';
+  space.classList.toggle('compact',Math.min(rx2,ry2)<150||w<560);
   const fc=document.getElementById('filaments');
   if(fc){fc.width=w*devicePixelRatio;fc.height=h*devicePixelRatio;
     fc.style.width=w+'px';fc.style.height=h+'px';}
 }
 addEventListener('resize',layoutRings);
+addEventListener('load',()=>{layoutRings();setTimeout(layoutRings,400);});
+if(window.visualViewport)visualViewport.addEventListener('resize',layoutRings);
+addEventListener('orientationchange',()=>setTimeout(layoutRings,250));
+console.log('physics.si build 2026-07-29-B (safe-area layout)');
 let rotSpeed=1;
 (function orbit(){
   const t=performance.now()/1000;
-  rotSpeed+=((hoverHold?0.06:1)-rotSpeed)*.04; // ease to near-stop on hover
+  rotSpeed+=((hoverHold?0.06:1)-rotSpeed)*.04;
   orbit.a=(orbit.a||0)+0.00115*rotSpeed;
   orbit.b=(orbit.b||0)-0.00075*rotSpeed;
   const inner=FIELDS.filter(f=>f.ring===0).length;
   let i0=0,i1=0;
+  const pos=[];
   FIELDS.forEach((f,i)=>{
     const el=nodes[i];if(!el)return;
     let x,y;
-    if(f.ring===0){
+    if(geom.single){
+      const th=orbit.b+(i/FIELDS.length)*Math.PI*2-Math.PI/2;
+      x=geom.cx+geom.rx2*Math.cos(th);y=geom.cy+geom.ry2*Math.sin(th);
+    }else if(f.ring===0){
       const th=orbit.a+(i0++/inner)*Math.PI*2-Math.PI/2;
       x=geom.cx+geom.rx1*Math.cos(th);y=geom.cy+geom.ry1*Math.sin(th);
     }else{
@@ -662,10 +706,9 @@ let rotSpeed=1;
     }
     const bob=Math.sin(t*1.1+i)*3;
     el.style.left=x+'px';el.style.top=(y+bob)+'px';
-    orbit.pos=orbit.pos||[];orbit.pos[i]=[x,y+bob];
+    pos[i]=[x,y+bob];
   });
-  drawFilaments(orbit.pos||[],t);
-  // holographic tilt
+  drawFilaments(pos,t);
   orbit.tx=(orbit.tx||0)+(((gm.y-.5)*-6.5)-(orbit.tx||0))*.05;
   orbit.ty=(orbit.ty||0)+(((gm.x-.5)*8.5)-(orbit.ty||0))*.05;
   space.style.transform=`perspective(1400px) rotateX(${orbit.tx}deg) rotateY(${orbit.ty}deg)`;
@@ -685,7 +728,7 @@ function drawFilaments(pts,t){
     const dx=x-cx,dy=y-cy,len=Math.hypot(dx,dy);
     if(len<1)continue;
     const ux=dx/len,uy=dy/len;
-    const s0=56*d,s1=len-36*d; // start past core, end before orb
+    const s0=56*d,s1=len-36*d;
     if(s1<=s0)continue;
     const hov=i===hoveredIdx;
     const breath=.6+.4*Math.sin(t*1.4+i*.9);
@@ -696,7 +739,6 @@ function drawFilaments(pts,t){
     g.strokeStyle=`rgba(169,198,232,${a})`;
     g.lineWidth=(hov?1.1:.55)*d;
     g.stroke();
-    // travelling pulses
     for(let k=0;k<2;k++){
       const p=((t*.11)+(i*.617)+(k*.5))%1;
       const px=cx+ux*(s0+(s1-s0)*p),py=cy+uy*(s0+(s1-s0)*p);
@@ -794,87 +836,6 @@ function renderMath(el){
       {left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}
     ],throwOnError:false});
 }
-
-/* ═════ Streaming ═════ */
-async function send(){
-  const input=$('ws-input');
-  const text=input.value.trim();
-  if(!text||state.streaming)return;
-  if(listening)stopMic();
-  input.value='';input.style.height='auto';
-  let content=text;
-  if(state.attach){
-    content=`[Attached document: ${state.attach.name}]\n\n${state.attach.text}\n\n---\n\n${text}`;
-  }
-  state.messages.push({role:'user',content});
-  addEntry('user').textContent=(state.attach?'⎘ '+state.attach.name+' — ':'')+text;
-  clearAttach();
-  $('sugs').innerHTML='';
-  const body=addEntry('assistant');
-  body.innerHTML='<div class="thinking"><span></span><span></span><span></span><span></span></div>';
-  state.streaming=true;$('ws-send').disabled=true;
-  let acc='',lastMath=0,sawThink=false;
-  try{
-    const res=await fetch('/api/chat',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        messages:state.messages,
-        field:state.field?state.field.id:null,
-        tool:state.tool?state.tool.id:null,
-        level:state.level
-      })
-    });
-    if(!res.ok){
-      const err=await res.text();
-      throw new Error(res.status===401?'API key not configured on the server.':(err||('HTTP '+res.status)));
-    }
-    const reader=res.body.getReader(),dec=new TextDecoder();
-    let buf='';
-    while(true){
-      const {done,value}=await reader.read();
-      if(done)break;
-      buf+=dec.decode(value,{stream:true});
-      const lines=buf.split('\n');buf=lines.pop();
-      for(const line of lines){
-        if(!line.startsWith('data:'))continue;
-        const p=line.slice(5).trim();
-        if(p==='[DONE]')continue;
-        try{
-          const ev=JSON.parse(p);
-          if(ev.type==='content_block_delta'&&ev.delta){
-            if(ev.delta.type==='thinking_delta'&&!acc){
-              if(!sawThink){sawThink=true;
-                body.innerHTML='<div class="thinking"><span></span><span></span><span></span><span></span></div><div class="thinklbl">thinking deeply…</div>';}
-            }else if(ev.delta.text){
-              acc+=ev.delta.text;
-              body.innerHTML=marked.parse(acc);
-              const now=performance.now();
-              if(now-lastMath>350){renderMath(body);lastMath=now;}
-              scrollBottom();
-            }
-          }
-        }catch(_){}
-      }
-    }
-    body.innerHTML=marked.parse(acc||'*no response*');
-    renderMath(body);
-    state.messages.push({role:'assistant',content:acc});
-    addActions(body.closest('.entry'),acc);
-    saveSession();
-  }catch(err){
-    body.innerHTML=`<p style="color:#ff9c9c">⚠ ${err.message}</p>`+
-      `<p style="color:var(--faint);font-size:12px;font-family:var(--mono)">owner: set ANTHROPIC_API_KEY in the deployment environment</p>`;
-  }
-  state.streaming=false;$('ws-send').disabled=false;
-  scrollBottom();
-}
-$('ws-send').addEventListener('click',send);
-$('ws-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}
-});
-$('ws-input').addEventListener('input',function(){
-  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,160)+'px';
-});
 
 /* ═════ Sessions (localStorage) ═════ */
 function loadSessions(){try{return JSON.parse(localStorage.getItem('psi_sessions')||'[]')}catch(_){return[]}}
@@ -982,7 +943,6 @@ function addActions(entry,raw){
 }
 
 /* ═════ Attach (pdf / txt / tex) ═════ */
-state.attach=null;
 function clearAttach(){state.attach=null;const c=$('attach-chip');if(c)c.innerHTML='';}
 function renderAttach(){
   const c=$('attach-chip');
@@ -1051,7 +1011,7 @@ function startMic(){
     input.value=(micBase+fin+inter).replace(/^\s+/,'');
     input.dispatchEvent(new Event('input'));
   };
-  rec.onend=()=>{ // browser pauses on silence — keep channel open
+  rec.onend=()=>{
     if(listening){micBase=input.value?input.value.replace(/\s+$/,'')+' ':'';try{rec.start()}catch(_){}}
   };
   rec.onerror=e=>{
@@ -1075,11 +1035,93 @@ function micUI(){
   if(input)input.placeholder=listening?'listening — speak, then press send…':'state your problem — type or speak…';
 }
 
+/* ═════ Streaming ═════ */
+async function send(){
+  const input=$('ws-input');
+  const text=input.value.trim();
+  if(!text||state.streaming)return;
+  if(listening)stopMic();
+  input.value='';input.style.height='auto';
+  let content=text;
+  if(state.attach){
+    content=`[Attached document: ${state.attach.name}]\n\n${state.attach.text}\n\n---\n\n${text}`;
+  }
+  state.messages.push({role:'user',content});
+  addEntry('user').textContent=(state.attach?'⎘ '+state.attach.name+' — ':'')+text;
+  clearAttach();
+  $('sugs').innerHTML='';
+  const body=addEntry('assistant');
+  body.innerHTML='<div class="thinking"><span></span><span></span><span></span><span></span></div>';
+  state.streaming=true;$('ws-send').disabled=true;
+  let acc='',lastMath=0,sawThink=false;
+  try{
+    const res=await fetch('/api/chat',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        messages:state.messages,
+        field:state.field?state.field.id:null,
+        tool:state.tool?state.tool.id:null,
+        level:state.level
+      })
+    });
+    if(!res.ok){
+      const err=await res.text();
+      throw new Error(res.status===401?'API key not configured on the server.':(err||('HTTP '+res.status)));
+    }
+    const reader=res.body.getReader(),dec=new TextDecoder();
+    let buf='';
+    while(true){
+      const {done,value}=await reader.read();
+      if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split('\n');buf=lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data:'))continue;
+        const p=line.slice(5).trim();
+        if(p==='[DONE]')continue;
+        try{
+          const ev=JSON.parse(p);
+          if(ev.type==='content_block_delta'&&ev.delta){
+            if(ev.delta.type==='thinking_delta'&&!acc){
+              if(!sawThink){sawThink=true;
+                body.innerHTML='<div class="thinking"><span></span><span></span><span></span><span></span></div><div class="thinklbl">thinking deeply…</div>';}
+            }else if(ev.delta.text){
+              acc+=ev.delta.text;
+              body.innerHTML=marked.parse(acc);
+              const now=performance.now();
+              if(now-lastMath>350){renderMath(body);lastMath=now;}
+              scrollBottom();
+            }
+          }
+        }catch(_){}
+      }
+    }
+    body.innerHTML=marked.parse(acc||'*no response*');
+    renderMath(body);
+    state.messages.push({role:'assistant',content:acc});
+    addActions(body.closest('.entry'),acc);
+    saveSession();
+  }catch(err){
+    body.innerHTML=`<p style="color:#ff9c9c">⚠ ${err.message}</p>`+
+      `<p style="color:var(--faint);font-size:12px;font-family:var(--mono)">owner: set ANTHROPIC_API_KEY in the deployment environment</p>`;
+  }
+  state.streaming=false;$('ws-send').disabled=false;
+  scrollBottom();
+}
+$('ws-send').addEventListener('click',send);
+$('ws-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}
+});
+$('ws-input').addEventListener('input',function(){
+  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,160)+'px';
+});
+
 buildConstellation();
 
 /* ═════ Instant ignition ═════ */
 requestAnimationFrame(()=>requestAnimationFrame(()=>{
   document.body.classList.add('booted');
+  layoutRings();
   setTimeout(()=>nodes.forEach(n=>n.querySelector('.orb').style.transitionDelay='0ms'),1900);
 }));
 </script>
